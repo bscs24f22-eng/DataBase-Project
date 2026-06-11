@@ -51,9 +51,9 @@ AAK Academy is an innovative e-learning platform designed to revolutionize the w
 | Farwa Imran | NUM-BSCS-2024-22 | bscs24f22@namal.edu.pk |
 
 
-**Instructor: Mam Asiya Batool
+Instructor: Mam Asiya Batool
 
-Requirement Provider: Ammar Ahmad Khan**
+Requirement Provider: Ammar Ahmad Khan
 
 
 ## Installation

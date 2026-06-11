@@ -2,7 +2,7 @@
 
 AAK Academy is an innovative e-learning platform designed to revolutionize the way students at the academy engage with educational content. This database serves as the backbone of the platform, managing student enrollment, fee calculation with automated discounts (10% for 3 subjects, 20% for 6 subjects), assignment and quiz administration, live class scheduling, attendance tracking, and comprehensive audit logging.
 
-**## Database Features**
+## Database Features
 
 - **Student Management**: Complete student profiles with program enrollment
 - **Subject Selection**: Students can enroll in subjects with automated discount calculation
@@ -12,9 +12,9 @@ AAK Academy is an innovative e-learning platform designed to revolutionize the w
 - **Role-Based Access**: Admin, Teacher, and Student roles with distinct permissions
 - **Audit Logging**: Complete trail of all user actions for accountability
 
-**## Database Schema (20 Tables)**
+## Database Schema (20 Tables)
 
-**| Table | Description |**
+| **Table **| **Description** |
 |-------|-------------|
 | user | System users (admin, teacher, student) |
 | admin | Administrator details |
@@ -43,7 +43,7 @@ AAK Academy is an innovative e-learning platform designed to revolutionize the w
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Backend**: PHP / Node.js
 
-**## Installation**
+## Installation
 
 ```sql
 -- Create database
@@ -58,8 +58,8 @@ SOURCE dbDML.sql;
 
 
 
-Group Details
-**| Name           | Roll No.         |	Email                  |**
+**Group Details**
+  |** Name  **         | **Roll No. **        |	**Email **                 |
   | Salman Safdar  | NUM-BSCS-2024-70 |	bscs24f70@namal.edu.pk |
   | Muhammad Haris | NUM-BSCS-2024-49 |	bscs24f49@namal.edu.pk |
   | Farwa Imran	   | NUM-BSCS-2024-22 |	bscs24f22@namal.edu.pk |

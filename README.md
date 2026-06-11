@@ -1,4 +1,4 @@
-**# 🗄️ AAK Academy Management System - Database**
+# 🗄️ AAK Academy Management System - Database
 
 AAK Academy is an innovative e-learning platform designed to revolutionize the way students at the academy engage with educational content. This database serves as the backbone of the platform, managing student enrollment, fee calculation with automated discounts (10% for 3 subjects, 20% for 6 subjects), assignment and quiz administration, live class scheduling, attendance tracking, and comprehensive audit logging.
 

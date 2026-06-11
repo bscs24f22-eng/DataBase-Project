@@ -14,7 +14,7 @@ AAK Academy is an innovative e-learning platform designed to revolutionize the w
 
 ## Database Schema (20 Tables)
 
-| **Table **| **Description** |
+| Table | **Description** |
 |-------|-------------|
 | user | System users (admin, teacher, student) |
 | admin | Administrator details |
@@ -44,7 +44,9 @@ AAK Academy is an innovative e-learning platform designed to revolutionize the w
 - **Backend**: PHP / Node.js
 
 **Group Details**
-  |** Name  **         | **Roll No. **        |	**Email **                 |
+
+
+  | Name           | Roll No.         | Email                  |
   | Salman Safdar  | NUM-BSCS-2024-70 |	bscs24f70@namal.edu.pk |
   | Muhammad Haris | NUM-BSCS-2024-49 |	bscs24f49@namal.edu.pk |
   | Farwa Imran	   | NUM-BSCS-2024-22 |	bscs24f22@namal.edu.pk |

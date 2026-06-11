@@ -43,6 +43,17 @@ AAK Academy is an innovative e-learning platform designed to revolutionize the w
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Backend**: PHP / Node.js
 
+**Group Details**
+  |** Name  **         | **Roll No. **        |	**Email **                 |
+  | Salman Safdar  | NUM-BSCS-2024-70 |	bscs24f70@namal.edu.pk |
+  | Muhammad Haris | NUM-BSCS-2024-49 |	bscs24f49@namal.edu.pk |
+  | Farwa Imran	   | NUM-BSCS-2024-22 |	bscs24f22@namal.edu.pk |
+
+**Instructor: Mam Asiya Batool
+
+Requirement Provider: Ammar Ahmad Khan**
+
+
 ## Installation
 
 ```sql
@@ -55,21 +66,3 @@ SOURCE dbDDL.sql;
 
 -- Run DML script to insert sample data
 SOURCE dbDML.sql;
-
-
-
-
-
-
-
-
-
-**Group Details**
-  |** Name  **         | **Roll No. **        |	**Email **                 |
-  | Salman Safdar  | NUM-BSCS-2024-70 |	bscs24f70@namal.edu.pk |
-  | Muhammad Haris | NUM-BSCS-2024-49 |	bscs24f49@namal.edu.pk |
-  | Farwa Imran	   | NUM-BSCS-2024-22 |	bscs24f22@namal.edu.pk |
-
-**Instructor: Mam Asiya Batool
-
-Requirement Provider: Ammar Ahmad Khan**

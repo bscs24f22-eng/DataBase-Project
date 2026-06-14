@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAK Academy Management System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sora:wght@600;700;800&display=swap');
+:root {
+  --green-deep:#1a4731;--green-mid:#2d7a4f;--green-light:#4caf7d;
+  --gold:#c9a227;--gold-light:#f0c84a;
+  --bg:#f5f7f5;--surface:#ffffff;--surface2:#eef2ef;
+  --text:#1a2e1e;--text-muted:#5a7060;--border:#d4e0d8;
+  --danger:#c0392b;--danger-light:#fdecea;
+  --success:#27ae60;--success-light:#eafaf1;
+  --warning:#e67e22;--info:#2980b9;
+  --shadow:0 2px 12px rgba(26,71,49,.10);--shadow-lg:0 8px 32px rgba(26,71,49,.15);
+  --radius:10px;--radius-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--green-deep) 0%,var(--green-mid) 60%,var(--green-light) 100%)}
+.login-card{background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
+  padding:48px 40px 40px;width:440px;max-width:95vw}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .shield{width:64px;height:64px;background:var(--green-deep);
+  border-radius:50% 50% 50% 50%/60% 60% 40% 40%;display:inline-flex;
+  align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 4px 16px rgba(26,71,49,.3)}
+.login-logo .shield span{color:var(--gold-light);font-family:'Sora',sans-serif;font-size:28px;font-weight:800}
+.login-logo h1{font-family:'Sora',sans-serif;font-size:22px;color:var(--green-deep);font-weight:700}
+.login-logo p{color:var(--text-muted);font-size:13px;margin-top:4px}
+.login-card label{display:block;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:6px;margin-top:18px}
+.login-card input,.login-card select{width:100%;padding:11px 14px;border:1.5px solid var(--border);
+  border-radius:var(--radius);font-size:14px;font-family:'Inter',sans-serif;background:var(--surface);transition:border-color .2s}
+.login-card input:focus,.login-card select:focus{outline:none;border-color:var(--green-mid)}
+.btn-primary{background:var(--green-deep);color:#fff;border:none;border-radius:var(--radius);
+  padding:12px 24px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-top:24px;
+  transition:background .2s,transform .1s;font-family:'Inter',sans-serif}
+.btn-primary:hover{background:var(--green-mid);transform:translateY(-1px)}
+.login-roles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.role-btn{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);
+  padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:12px;font-weight:600;color:var(--text-muted)}
+.role-btn:hover,.role-btn.selected{border-color:var(--green-mid);background:#eef8f3;color:var(--green-deep)}
+.role-btn .ri{font-size:22px;display:block;margin-bottom:4px}
+.login-demo{margin-top:14px;text-align:center;font-size:12px;color:var(--text-muted)}
+.login-demo span{background:var(--surface2);padding:2px 7px;border-radius:4px;margin:0 2px;font-weight:500}
+
+/* APP */
+#app{display:none;min-height:100vh}
+.app-layout{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:250px;background:var(--green-deep);color:#fff;display:flex;flex-direction:column;
+  min-height:100vh;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;gap:12px}
+.sidebar-header .mini-shield{width:38px;height:38px;background:var(--gold);
+  border-radius:50% 50% 50% 50%/60% 60% 40% 40%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sidebar-header .mini-shield span{color:var(--green-deep);font-family:'Sora',sans-serif;font-weight:800;font-size:16px}
+.sidebar-header h2{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;line-height:1.2}
+.sidebar-header p{font-size:11px;opacity:.65}
+.sidebar-user{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--green-light);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--green-deep);flex-shrink:0}
+.sidebar-user .uname{font-size:13px;font-weight:600}
+.sidebar-user .urole{font-size:11px;opacity:.6}
+.role-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;margin-top:2px}
+.role-badge.admin{background:rgba(201,162,39,.25);color:var(--gold-light)}
+.role-badge.teacher{background:rgba(41,128,185,.25);color:#7ec8f0}
+.role-badge.student{background:rgba(76,175,125,.25);color:#a0e6c0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.nav-section{padding:8px 20px 4px;font-size:10px;font-weight:700;opacity:.45;letter-spacing:1.2px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13.5px;cursor:pointer;
+  transition:background .15s;opacity:.82;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.08);opacity:1}
+.nav-item.active{background:rgba(255,255,255,.12);opacity:1;border-left-color:var(--gold-light);font-weight:600}
+.nav-item .icon{font-size:17px;width:20px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.btn-logout{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--radius);padding:9px 16px;font-size:13px;cursor:pointer;width:100%;
+  font-family:'Inter',sans-serif;transition:background .2s}
+.btn-logout:hover{background:rgba(255,255,255,.18)}
+
+/* MAIN */
+.main-content{margin-left:250px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.topbar h3{font-family:'Sora',sans-serif;font-size:17px;color:var(--green-deep)}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.date-chip{background:var(--surface2);padding:5px 12px;border-radius:20px;font-size:12px;color:var(--text-muted)}
+.notif-btn{background:var(--green-mid);color:#fff;border-radius:50%;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative}
+
+.page{display:none;padding:28px;flex:1}
+.page.active{display:block}
+
+/* CARDS / STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:20px 22px;
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:16px;border-left:4px solid var(--green-mid)}
+.stat-card.gold{border-left-color:var(--gold)}
+.stat-card.blue{border-left-color:var(--info)}
+.stat-card.red{border-left-color:var(--danger)}
+.stat-card.purple{border-left-color:#8e44ad}
+.stat-icon{font-size:30px}
+.stat-val{font-family:'Sora',sans-serif;font-size:26px;font-weight:700;color:var(--green-deep);line-height:1}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:3px}
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.card{background:var(--surface);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:20px}
+.card-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:var(--green-deep);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* TABLES */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.section-header h2{font-family:'Sora',sans-serif;font-size:20px;color:var(--green-deep)}
+.btn-add{background:var(--green-deep);color:#fff;border:none;border-radius:var(--radius);
+  padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;
+  transition:background .2s;display:flex;align-items:center;gap:6px}
+.btn-add:hover{background:var(--green-mid)}
+.btn-mail{background:#2980b9;color:#fff;border:none;border-radius:var(--radius);
+  padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s}
+.btn-mail:hover{background:#1a6fa6}
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:200px;padding:9px 14px;border:1.5px solid var(--border);
+  border-radius:var(--radius);font-size:13px;font-family:'Inter',sans-serif}
+.search-bar input:focus{outline:none;border-color:var(--green-mid)}
+.search-bar select{padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius);
+  font-size:13px;font-family:'Inter',sans-serif;background:var(--surface)}
+.table-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;background:var(--surface);font-size:13.5px}
+thead{background:var(--green-deep);color:#fff}
+thead th{padding:12px 14px;text-align:left;font-weight:600;font-size:12px;letter-spacing:.4px;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:11px 14px;vertical-align:middle}
+tbody tr:last-child{border-bottom:none}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.tag-green{background:var(--success-light);color:var(--success)}
+.tag-red{background:var(--danger-light);color:var(--danger)}
+.tag-gold{background:#fef9e7;color:var(--gold)}
+.tag-blue{background:#eaf4fb;color:var(--info)}
+.tag-gray{background:var(--surface2);color:var(--text-muted)}
+.tag-purple{background:#f5eef8;color:#8e44ad}
+.action-btns{display:flex;gap:6px}
+.btn-edit,.btn-del,.btn-view{border:none;border-radius:6px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600}
+.btn-edit{background:#eaf4fb;color:var(--info)}
+.btn-edit:hover{background:var(--info);color:#fff}
+.btn-del{background:var(--danger-light);color:var(--danger)}
+.btn-del:hover{background:var(--danger);color:#fff}
+.btn-view{background:var(--success-light);color:var(--success)}
+.btn-view:hover{background:var(--success);color:#fff}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);padding:32px 30px 26px;
+  width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.modal-title{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:var(--green-deep)}
+.modal-close{background:var(--surface2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12px;font-weight:600;color:var(--text-muted)}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Inter',sans-serif;background:var(--surface)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--green-mid)}
+.form-group textarea{resize:vertical;min-height:70px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+.btn-cancel{background:var(--surface2);color:var(--text);border:none;border-radius:var(--radius);padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-save{background:var(--green-deep);color:#fff;border:none;border-radius:var(--radius);padding:9px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+.btn-save:hover{background:var(--green-mid)}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--green-deep);color:#fff;
+  padding:13px 22px;border-radius:var(--radius);font-size:14px;font-weight:500;
+  box-shadow:var(--shadow-lg);z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--danger)}
+.toast.info{background:var(--info)}
+
+/* MISC */
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;background:var(--green-mid);margin-top:5px;flex-shrink:0}
+.activity-text{font-size:13px}
+.activity-time{font-size:11px;color:var(--text-muted);margin-top:2px}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qa-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:14px;text-align:center;cursor:pointer;transition:all .2s;font-size:13px;font-weight:500}
+.qa-btn:hover{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+.qa-btn .qicon{font-size:22px;display:block;margin-bottom:5px}
+.fee-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.fee-box{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);text-align:center}
+.fee-box .fval{font-family:'Sora',sans-serif;font-size:22px;font-weight:700}
+.fee-box .flabel{font-size:12px;color:var(--text-muted);margin-top:4px}
+.fee-box.paid .fval{color:var(--success)}
+.fee-box.pending .fval{color:var(--warning)}
+.fee-box.total .fval{color:var(--green-deep)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;background:var(--green-mid);border-radius:3px;transition:width .4s}
+.tab-bar{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab{padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;color:var(--text-muted);transition:all .2s}
+.tab.active{color:var(--green-deep);border-bottom-color:var(--green-mid)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* INFO BANNER */
+.info-banner{background:#eaf4fb;border:1px solid #bee3f8;border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;font-size:13px;color:#1a6fa6;display:flex;align-items:center;gap:10px}
+.info-banner.warning{background:#fef9e7;border-color:#f9e07f;color:#7d6100}
+.info-banner.success{background:var(--success-light);border-color:#a9e4c2;color:#1e6641}
+
+/* ATTENDANCE SUMMARY */
+.att-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.att-box{background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);text-align:center}
+.att-box .aval{font-family:'Sora',sans-serif;font-size:26px;font-weight:700}
+.att-box .alabel{font-size:12px;color:var(--text-muted);margin-top:3px}
+.att-box.present .aval{color:var(--success)}
+.att-box.absent .aval{color:var(--danger)}
+.att-box.rate .aval{color:var(--info)}
+
+/* DROP REQUEST */
+.drop-form{background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);max-width:600px}
+.drop-form label{display:block;font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:6px;margin-top:14px}
+.drop-form select,.drop-form textarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Inter',sans-serif;background:var(--surface)}
+.drop-form textarea{resize:vertical;min-height:100px}
+.drop-form select:focus,.drop-form textarea:focus{outline:none;border-color:var(--green-mid)}
+
+/* RESPONSIVE */
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.dash-grid{grid-template-columns:1fr}.sidebar{width:200px}.main-content{margin-left:200px}}
+@media(max-width:640px){.sidebar{width:0;overflow:hidden}.main-content{margin-left:0}.stats-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}
+
+/* ANNOUNCEMENT CARDS */
+.ann-card{background:var(--surface);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;border-left:4px solid var(--green-mid)}
+.ann-card.admin-ann{border-left-color:var(--gold)}
+.ann-card.teacher-ann{border-left-color:var(--info)}
+.ann-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ann-card-title{font-weight:700;font-size:15px;color:var(--green-deep)}
+.ann-card-meta{font-size:12px;color:var(--text-muted);margin-top:4px}
+.ann-card-body{font-size:13px;color:var(--text);line-height:1.6;margin-top:8px}
+.ann-actions{display:flex;gap:6px;margin-top:10px}
+
+/* SUBJECT CARD for student */
+.subj-card{background:var(--surface);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-left:4px solid var(--info)}
+.subj-card-title{font-weight:700;font-size:14px;color:var(--green-deep)}
+.subj-card-meta{font-size:12px;color:var(--text-muted);margin-top:4px}
+.subj-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+
+/* LIVE CLASS CARD */
+.lc-card{background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.lc-info .lc-title{font-weight:700;font-size:14px}
+.lc-info .lc-meta{font-size:12px;color:var(--text-muted);margin-top:3px}
+.btn-join{background:var(--success);color:#fff;border:none;border-radius:var(--radius);
+  padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn-join:hover{background:#229954}
+
+/* QUIZ CARD */
+.quiz-card{background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.quiz-score{font-family:'Sora',sans-serif;font-size:20px;font-weight:700}
+.quiz-score.pass{color:var(--success)}
+.quiz-score.fail{color:var(--danger)}
+
+/* OVERALL ATT TABLE */
+.att-overall{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="shield"><span>A</span></div>
+      <h1>AAK Academy</h1>
+      <p>Management System (AAMS) — Namal University</p>
+    </div>
+    <label>Email Address</label>
+    <input type="email" id="login-email" placeholder="admin@aakacademy.pk" value="admin@aakacademy.pk">
+    <label>Password</label>
+    <input type="password" id="login-pass" placeholder="••••••••" value="password123">
+    <label>Login As</label>
+    <div class="login-roles">
+      <div class="role-btn selected" onclick="selectRole('Admin',this)"><span class="ri">🛡️</span>Admin</div>
+      <div class="role-btn" onclick="selectRole('Teacher',this)"><span class="ri">👨‍🏫</span>Teacher</div>
+      <div class="role-btn" onclick="selectRole('Student',this)"><span class="ri">👨‍🎓</span>Student</div>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In to AAMS</button>
+    <div class="login-demo">Admin: <span>admin@aakacademy.pk</span> · Teacher: <span>ali.hassan@aakacademy.pk</span> · Student: <span>ahmed.raza@student.aakacademy.pk</span> · Password: <span>password123</span></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="mini-shield"><span>A</span></div>
+        <div><h2>AAK Academy</h2><p>AAMS v2.0</p></div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sb-avatar">A</div>
+        <div>
+          <div class="uname" id="sb-name">Admin User</div>
+          <div class="urole" id="sb-role-badge"></div>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="doLogout()">⬅ Sign Out</button>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <div class="topbar">
+        <h3 id="page-title">Dashboard</h3>
+        <div class="topbar-right">
+          <div class="date-chip" id="date-chip"></div>
+          <div class="notif-btn" title="Notifications">🔔</div>
+        </div>
+      </div>
+
+      <div id="pages">
+
+        <!-- ═══════════ ADMIN PAGES ═══════════ -->
+
+        <!-- ADMIN DASHBOARD -->
+        <div class="page" id="page-dashboard-Admin">
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div><div class="stat-val">247</div><div class="stat-label">Total Students</div></div></div>
+            <div class="stat-card gold"><div class="stat-icon">👨‍🏫</div><div><div class="stat-val">18</div><div class="stat-label">Teachers</div></div></div>
+            <div class="stat-card blue"><div class="stat-icon">📚</div><div><div class="stat-val">34</div><div class="stat-label">Active Subjects</div></div></div>
+            <div class="stat-card red"><div class="stat-icon">💰</div><div><div class="stat-val">PKR 2.4M</div><div class="stat-label">Revenue This Month</div></div></div>
+          </div>
+          <!-- OVERALL ATTENDANCE OVERVIEW (Admin only) -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-title">✅ Overall Attendance Summary</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+              <div style="text-align:center;padding:14px;background:var(--success-light);border-radius:var(--radius)">
+                <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--success)">89%</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Overall Rate</div>
+              </div>
+              <div style="text-align:center;padding:14px;background:#eaf4fb;border-radius:var(--radius)">
+                <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--info)">1,842</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Classes Held</div>
+              </div>
+              <div style="text-align:center;padding:14px;background:var(--success-light);border-radius:var(--radius)">
+                <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--success)">1,639</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Present</div>
+              </div>
+              <div style="text-align:center;padding:14px;background:var(--danger-light);border-radius:var(--radius)">
+                <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--danger)">203</div>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Absent</div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-grid">
+            <div>
+              <div class="card">
+                <div class="card-title">📋 Recent Activity</div>
+                <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">Ali Hassan submitted Assignment #3 — Database Systems</div><div class="activity-time">2 minutes ago</div></div></div>
+                <div class="activity-item"><div class="activity-dot" style="background:var(--gold)"></div><div><div class="activity-text">Teacher Sara Khan uploaded material for CS-101</div><div class="activity-time">14 minutes ago</div></div></div>
+                <div class="activity-item"><div class="activity-dot" style="background:var(--info)"></div><div><div class="activity-text">New student enrolled: Farhan Ahmed — BS Computer Science</div><div class="activity-time">1 hour ago</div></div></div>
+                <div class="activity-item"><div class="activity-dot" style="background:var(--danger)"></div><div><div class="activity-text">Fee payment overdue for 12 students</div><div class="activity-time">3 hours ago</div></div></div>
+                <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text">Quiz #5 — OOP completed by 45 students</div><div class="activity-time">Yesterday</div></div></div>
+              </div>
+              <div class="card">
+                <div class="card-title">📊 Enrollment by Program</div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div><div style="display:flex;justify-content:space-between;font-size:13px"><span>BS Computer Science</span><span style="font-weight:600">112</span></div><div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:13px"><span>BS Software Engineering</span><span style="font-weight:600">78</span></div><div class="progress-bar"><div class="progress-fill" style="width:56%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:13px"><span>BS Information Technology</span><span style="font-weight:600">57</span></div><div class="progress-bar"><div class="progress-fill" style="width:41%"></div></div></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <div class="card-title">⚡ Quick Actions</div>
+                <div class="quick-actions">
+                  <div class="qa-btn" onclick="showPage('students')"><span class="qicon">➕</span>Add Student</div>
+                  <div class="qa-btn" onclick="showPage('teachers')"><span class="qicon">👨‍🏫</span>Add Teacher</div>
+                  <div class="qa-btn" onclick="showPage('admin-announcements')"><span class="qicon">📢</span>Announce</div>
+                  <div class="qa-btn" onclick="showPage('fees')"><span class="qicon">💳</span>Fee Report</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">📅 Upcoming Live Classes</div>
+                <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+                  <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">Database Systems</div><div style="color:var(--text-muted);font-size:11px">Dr. Aamir Khan • 10:00 AM</div></div><span class="tag tag-green">Today</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">OOP with Java</div><div style="color:var(--text-muted);font-size:11px">Ms. Sara Malik • 2:00 PM</div></div><span class="tag tag-green">Today</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">Data Structures</div><div style="color:var(--text-muted);font-size:11px">Mr. Bilal Ahmed • 9:00 AM</div></div><span class="tag tag-blue">Tomorrow</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENTS (Admin) -->
+        <div class="page" id="page-students">
+          <div class="section-header">
+            <h2>👨‍🎓 Students</h2>
+            <button class="btn-add" onclick="openModal('students')">+ Add Student</button>
+          </div>
+          <div class="search-bar">
+            <input type="text" placeholder="Search students..." oninput="filterTable('students-table',this.value)">
+            <select onchange="filterByTag('students-table',this.value,7)"><option value="">All Status</option><option>Active</option><option>Inactive</option></select>
+          </div>
+          <div class="table-wrap">
+            <table id="students-table">
+              <thead><tr><th>#</th><th>Reg No</th><th>Full Name</th><th>Program</th><th>DOB</th><th>Gender</th><th>Enrolled</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="students-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEACHERS (Admin) -->
+        <div class="page" id="page-teachers">
+          <div class="section-header">
+            <h2>👨‍🏫 Teachers</h2>
+            <button class="btn-add" onclick="openModal('teachers')">+ Add Teacher</button>
+          </div>
+          <div class="search-bar"><input type="text" placeholder="Search teachers..." oninput="filterTable('teachers-table',this.value)"></div>
+          <div class="table-wrap">
+            <table id="teachers-table">
+              <thead><tr><th>#</th><th>Name</th><th>Qualification</th><th>Specialization</th><th>Experience</th><th>Hire Date</th><th>Subjects</th><th>Actions</th></tr></thead>
+              <tbody id="teachers-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PROGRAMS (Admin) -->
+        <div class="page" id="page-programs">
+          <div class="section-header"><h2>🎓 Programs</h2><button class="btn-add" onclick="openModal('programs')">+ Add Program</button></div>
+          <div class="table-wrap">
+            <table id="programs-table">
+              <thead><tr><th>#</th><th>Program Name</th><th>Level</th><th>Duration</th><th>Students</th><th>Subjects</th><th>Actions</th></tr></thead>
+              <tbody id="programs-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUBJECTS (Admin) -->
+        <div class="page" id="page-subjects">
+          <div class="section-header"><h2>📚 Subjects</h2><button class="btn-add" onclick="openModal('subjects')">+ Add Subject</button></div>
+          <div class="search-bar"><input type="text" placeholder="Search subjects..." oninput="filterTable('subjects-table',this.value)"></div>
+          <div class="table-wrap">
+            <table id="subjects-table">
+              <thead><tr><th>#</th><th>Code</th><th>Subject Name</th><th>Program</th><th>Teacher</th><th>Credit Hrs</th><th>Fee (PKR)</th><th>Actions</th></tr></thead>
+              <tbody id="subjects-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ENROLLMENT (Admin) -->
+        <div class="page" id="page-enrollment">
+          <div class="section-header"><h2>📋 Enrollment</h2><button class="btn-add" onclick="openModal('enrollment')">+ Enroll Student</button></div>
+          <div class="search-bar"><input type="text" placeholder="Search enrollments..." oninput="filterTable('enrollment-table',this.value)"></div>
+          <div class="table-wrap">
+            <table id="enrollment-table">
+              <thead><tr><th>#</th><th>Student</th><th>Subject</th><th>Enrolled On</th><th>Discount %</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="enrollment-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- DROP REQUESTS (Admin) - receives emails from students -->
+        <div class="page" id="page-drop-requests">
+          <div class="section-header"><h2>📩 Course Drop Requests</h2></div>
+          <div class="info-banner warning">⚠️ Students cannot drop courses directly. They must email admin. Review requests below and take action.</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Student</th><th>Subject</th><th>Reason</th><th>Requested On</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Salman Safar</td><td>Database Systems</td><td>Personal reasons</td><td>2026-06-10</td><td><span class="tag tag-gold">Pending</span></td><td><div class="action-btns"><button class="btn-view" onclick="showToast('Drop approved for Salman Safar')">Approve</button><button class="btn-del" onclick="showToast('Drop rejected','error')">Reject</button></div></td></tr>
+                <tr><td>2</td><td>Zain Abbas</td><td>OOP</td><td>Workload too heavy</td><td>2026-06-12</td><td><span class="tag tag-green">Approved</span></td><td><div class="action-btns"><button class="btn-view">View</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ASSIGNMENTS (Admin) -->
+        <div class="page" id="page-assignments-admin">
+          <div class="section-header"><h2>📝 Assignments</h2></div>
+          <div class="info-banner">ℹ️ Assignments are created by teachers. Admin can view all submissions and grades.</div>
+          <div class="table-wrap">
+            <table id="assignments-table">
+              <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Teacher</th><th>Deadline</th><th>Total Marks</th><th>Submissions</th></tr></thead>
+              <tbody id="assignments-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- QUIZZES (Admin) -->
+        <div class="page" id="page-quizzes-admin">
+          <div class="section-header"><h2>📊 Quizzes</h2></div>
+          <div class="info-banner">ℹ️ Quizzes are created by teachers. Admin has read-only overview.</div>
+          <div class="table-wrap">
+            <table id="quizzes-table">
+              <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Teacher</th><th>Total Marks</th><th>Date</th><th>Time Limit</th></tr></thead>
+              <tbody id="quizzes-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LIVE CLASSES (Admin) -->
+        <div class="page" id="page-liveclasses-admin">
+          <div class="section-header"><h2>🎥 Live Classes</h2><button class="btn-add" onclick="openModal('liveclasses')">+ Schedule Class</button></div>
+          <div class="table-wrap">
+            <table id="liveclasses-table">
+              <thead><tr><th>#</th><th>Subject</th><th>Teacher</th><th>Zoom Link</th><th>Date</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+              <tbody id="liveclasses-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ATTENDANCE (Admin - full view) -->
+        <div class="page" id="page-attendance-admin">
+          <div class="section-header"><h2>✅ Attendance — All Students</h2><button class="btn-add" onclick="openModal('attendance')">+ Mark Attendance</button></div>
+          <div class="info-banner success">📊 Admin can view and manage full attendance records for all students and all classes.</div>
+          <div class="search-bar">
+            <input type="text" placeholder="Search by student name..." oninput="filterTable('attendance-table',this.value)">
+            <select><option value="">All Classes</option><option>Database Systems</option><option>OOP</option><option>Data Structures</option></select>
+          </div>
+          <div class="table-wrap">
+            <table id="attendance-table">
+              <thead><tr><th>#</th><th>Student</th><th>Live Class</th><th>Date & Time</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="attendance-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FEES (Admin) -->
+        <div class="page" id="page-fees">
+          <div class="section-header"><h2>💳 Fee Management</h2><button class="btn-add" onclick="openModal('fees')">+ Generate Fee</button></div>
+          <div class="fee-summary">
+            <div class="fee-box total"><div class="fval">PKR 4.8M</div><div class="flabel">Total Invoiced</div></div>
+            <div class="fee-box paid"><div class="fval">PKR 3.2M</div><div class="flabel">Collected</div></div>
+            <div class="fee-box pending"><div class="fval">PKR 1.6M</div><div class="flabel">Outstanding</div></div>
+          </div>
+          <div class="table-wrap">
+            <table id="fees-table">
+              <thead><tr><th>#</th><th>Student</th><th>Total Fee</th><th>Discount</th><th>Amount Paid</th><th>Balance</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="fees-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- MATERIALS (Admin - view only) -->
+        <div class="page" id="page-materials-admin">
+          <div class="section-header"><h2>📖 Learning Materials</h2></div>
+          <div class="info-banner">ℹ️ Materials are uploaded by teachers. Admin has view access.</div>
+          <div class="table-wrap">
+            <table id="materials-table">
+              <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Teacher</th><th>Type</th><th>Upload Date</th><th>Action</th></tr></thead>
+              <tbody id="materials-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ADMIN ANNOUNCEMENTS -->
+        <div class="page" id="page-admin-announcements">
+          <div class="section-header"><h2>📢 Announcements</h2><button class="btn-add" onclick="openModal('announcements')">+ Post Announcement</button></div>
+          <div class="info-banner warning">⚠️ Admin announcements are visible to all. Teacher announcements cannot be edited or deleted by admin.</div>
+          <div id="admin-ann-list"></div>
+        </div>
+
+        <!-- NOTIFICATIONS (Admin) -->
+        <div class="page" id="page-notifications">
+          <div class="section-header"><h2>🔔 Notifications</h2><button class="btn-add" onclick="openModal('notifications')">+ Send Notification</button></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>#</th><th>Recipient</th><th>Title</th><th>Message</th><th>Type</th><th>Sent</th><th>Read</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>All Students</td><td>Fee Reminder</td><td>Your fee for June is due by 21st June</td><td><span class="tag tag-gold">Broadcast</span></td><td>2026-06-10</td><td><span class="tag tag-green">Yes</span></td></tr>
+              <tr><td>2</td><td>Ali Hassan</td><td>Assignment Graded</td><td>Your Assignment #1 has been graded</td><td><span class="tag tag-blue">Personal</span></td><td>2026-06-11</td><td><span class="tag tag-red">No</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- USERS (Admin) -->
+        <div class="page" id="page-users">
+          <div class="section-header"><h2>👤 Users</h2><button class="btn-add" onclick="openModal('users')">+ Add User</button></div>
+          <div class="table-wrap">
+            <table id="users-table">
+              <thead><tr><th>#</th><th>Full Name</th><th>Email</th><th>Role</th><th>Phone</th><th>Status</th><th>Last Login</th><th>Actions</th></tr></thead>
+              <tbody id="users-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- AUDIT LOG (Admin) -->
+        <div class="page" id="page-auditlog">
+          <div class="section-header"><h2>🔐 Audit Log</h2></div>
+          <div class="search-bar"><input type="text" placeholder="Search logs..."><select><option>All Actions</option><option>INSERT</option><option>UPDATE</option><option>DELETE</option><option>LOGIN</option></select></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>#</th><th>User</th><th>Action</th><th>Old Value</th><th>New Value</th><th>Timestamp</th></tr></thead>
+            <tbody id="auditlog-body"></tbody></table>
+          </div>
+        </div>
+
+
+        <!-- ═══════════ TEACHER PAGES ═══════════ -->
+
+        <!-- TEACHER DASHBOARD -->
+        <div class="page" id="page-dashboard-Teacher">
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div><div class="stat-val">87</div><div class="stat-label">My Students</div></div></div>
+            <div class="stat-card gold"><div class="stat-icon">📚</div><div><div class="stat-val">3</div><div class="stat-label">My Subjects</div></div></div>
+            <div class="stat-card blue"><div class="stat-icon">📝</div><div><div class="stat-val">5</div><div class="stat-label">Active Assignments</div></div></div>
+            <div class="stat-card red"><div class="stat-icon">📊</div><div><div class="stat-val">3</div><div class="stat-label">Upcoming Quizzes</div></div></div>
+          </div>
+          <div class="dash-grid">
+            <div>
+              <div class="card">
+                <div class="card-title">📅 My Classes Today</div>
+                <div class="lc-card">
+                  <div class="lc-info"><div class="lc-title">Database Systems</div><div class="lc-meta">10:00 AM – 11:30 AM • 42 Students Enrolled</div></div>
+                  <a class="btn-join" href="https://zoom.us/j/123" target="_blank">Join Zoom</a>
+                </div>
+                <div class="lc-card" style="border:1.5px solid var(--border)">
+                  <div class="lc-info"><div class="lc-title">OOP with Java</div><div class="lc-meta">2:00 PM – 3:30 PM • 45 Students Enrolled</div></div>
+                  <a class="btn-join" href="https://zoom.us/j/456" target="_blank">Join Zoom</a>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">📝 Pending Submissions</div>
+                <div style="font-size:13px">
+                  <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><span>ER Diagram Design — DB Systems</span><span class="tag tag-gold">38/42 submitted</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><span>Inheritance Lab Task — OOP</span><span class="tag tag-green">45/45 submitted</span></div>
+                  <div style="display:flex;justify-content:space-between;padding:10px 0"><span>Linked List — Data Structures</span><span class="tag tag-red">30/45 submitted</span></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <div class="card-title">⚡ Quick Actions</div>
+                <div class="quick-actions">
+                  <div class="qa-btn" onclick="showPage('t-assignments')"><span class="qicon">📝</span>Create Assignment</div>
+                  <div class="qa-btn" onclick="showPage('t-quizzes')"><span class="qicon">📊</span>Create Quiz</div>
+                  <div class="qa-btn" onclick="showPage('t-materials')"><span class="qicon">📖</span>Upload Material</div>
+                  <div class="qa-btn" onclick="showPage('t-announcements')"><span class="qicon">📢</span>Announce</div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">📊 Attendance Overview</div>
+                <div style="font-size:13px;display:flex;flex-direction:column;gap:10px">
+                  <div><div style="display:flex;justify-content:space-between"><span>Database Systems</span><span style="font-weight:700;color:var(--success)">91%</span></div><div class="progress-bar"><div class="progress-fill" style="width:91%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between"><span>OOP with Java</span><span style="font-weight:700;color:var(--success)">85%</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--gold)"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between"><span>Data Structures</span><span style="font-weight:700;color:var(--warning)">76%</span></div><div class="progress-bar"><div class="progress-fill" style="width:76%;background:var(--warning)"></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER — MY SUBJECTS (view only) -->
+        <div class="page" id="page-t-subjects">
+          <div class="section-header"><h2>📚 My Subjects</h2></div>
+          <div class="info-banner">ℹ️ Subjects are managed by Admin. Contact admin to add or remove a subject.</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Code</th><th>Subject Name</th><th>Program</th><th>Credit Hrs</th><th>Students Enrolled</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td><b>CS-271</b></td><td>Database Systems</td><td>BS Computer Science</td><td>3</td><td><span class="tag tag-blue">42</span></td></tr>
+                <tr><td>2</td><td><b>CS-202</b></td><td>Object Oriented Programming</td><td>BS Computer Science</td><td>3</td><td><span class="tag tag-blue">45</span></td></tr>
+                <tr><td>3</td><td><b>CS-211</b></td><td>Data Structures & Algorithms</td><td>BS Computer Science</td><td>3</td><td><span class="tag tag-blue">45</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEACHER — ASSIGNMENTS (create own, grade) -->
+        <div class="page" id="page-t-assignments">
+          <div class="section-header"><h2>📝 Assignments</h2><button class="btn-add" onclick="openModal('assignments')">+ Create Assignment</button></div>
+          <div class="tab-bar">
+            <div class="tab active" onclick="switchTab('tassign',0)">My Assignments</div>
+            <div class="tab" onclick="switchTab('tassign',1)">Submissions</div>
+          </div>
+          <div class="tab-panel active" id="tassign-tab-0">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Deadline</th><th>Total Marks</th><th>Submissions</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><b>ER Diagram Design</b></td><td>Database Systems</td><td>2026-06-20</td><td>20</td><td><span class="tag tag-gold">38</span></td><td><div class="action-btns"><button class="btn-edit" onclick="openModal('assignments')">Edit</button><button class="btn-del" onclick="showToast('Assignment deleted','error')">Delete</button></div></td></tr>
+                  <tr><td>2</td><td><b>Inheritance Lab Task</b></td><td>OOP</td><td>2026-06-18</td><td>15</td><td><span class="tag tag-green">45</span></td><td><div class="action-btns"><button class="btn-edit" onclick="openModal('assignments')">Edit</button><button class="btn-del" onclick="showToast('Assignment deleted','error')">Delete</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-panel" id="tassign-tab-1">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Student</th><th>Assignment</th><th>Submitted On</th><th>Marks</th><th>Feedback</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Ali Hassan</td><td>ER Diagram Design</td><td>2026-06-10</td><td><span class="tag tag-green">18/20</span></td><td>Good work!</td><td><div class="action-btns"><button class="btn-edit">Grade</button></div></td></tr>
+                  <tr><td>2</td><td>Sara Ahmed</td><td>Inheritance Lab Task</td><td>2026-06-11</td><td><span class="tag tag-gold">12/15</span></td><td>Needs improvement</td><td><div class="action-btns"><button class="btn-edit">Grade</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER — QUIZZES -->
+        <div class="page" id="page-t-quizzes">
+          <div class="section-header"><h2>📊 Quizzes</h2><button class="btn-add" onclick="openModal('quizzes')">+ Create Quiz</button></div>
+          <div class="tab-bar">
+            <div class="tab active" onclick="switchTab('tquiz',0)">My Quizzes</div>
+            <div class="tab" onclick="switchTab('tquiz',1)">Attempts</div>
+          </div>
+          <div class="tab-panel active" id="tquiz-tab-0">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Total Marks</th><th>Date</th><th>Time Limit</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><b>Quiz 1 — Normalization</b></td><td>Database Systems</td><td>25</td><td>2026-06-08</td><td>30 min</td><td><div class="action-btns"><button class="btn-edit">Edit</button><button class="btn-del">Delete</button></div></td></tr>
+                  <tr><td>2</td><td><b>Quiz 1 — OOP Concepts</b></td><td>OOP</td><td>20</td><td>2026-06-09</td><td>25 min</td><td><div class="action-btns"><button class="btn-edit">Edit</button><button class="btn-del">Delete</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-panel" id="tquiz-tab-1">
+            <div class="table-wrap">
+              <table><thead><tr><th>#</th><th>Student</th><th>Quiz</th><th>Score</th><th>Attempt Date</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Ali Hassan</td><td>Quiz 1 — Normalization</td><td><span class="tag tag-green">19/25</span></td><td>2026-06-08</td><td><span class="tag tag-green">Passed</span></td></tr>
+                <tr><td>2</td><td>Zain Abbas</td><td>Quiz 1 — OOP Concepts</td><td><span class="tag tag-red">10/20</span></td><td>2026-06-09</td><td><span class="tag tag-red">Failed</span></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEACHER — LIVE CLASSES -->
+        <div class="page" id="page-t-liveclasses">
+          <div class="section-header"><h2>🎥 Live Classes</h2><button class="btn-add" onclick="openModal('liveclasses')">+ Schedule Class</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Subject</th><th>Zoom Link</th><th>Date</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Database Systems</td><td><a href="https://zoom.us/j/123" target="_blank" style="color:var(--info)">Join Zoom</a></td><td>2026-06-14</td><td>10:00 AM</td><td>11:30 AM</td><td><div class="action-btns"><button class="btn-edit">Edit</button><button class="btn-del">Delete</button></div></td></tr>
+                <tr><td>2</td><td>OOP with Java</td><td><a href="https://zoom.us/j/456" target="_blank" style="color:var(--info)">Join Zoom</a></td><td>2026-06-14</td><td>2:00 PM</td><td>3:30 PM</td><td><div class="action-btns"><button class="btn-edit">Edit</button><button class="btn-del">Delete</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEACHER — ATTENDANCE (mark own classes) -->
+        <div class="page" id="page-t-attendance">
+          <div class="section-header"><h2>✅ Attendance — My Classes</h2><button class="btn-add" onclick="openModal('attendance')">+ Mark Attendance</button></div>
+          <div class="search-bar">
+            <input type="text" placeholder="Search students...">
+            <select><option>All Classes</option><option>Database Systems</option><option>OOP</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Student</th><th>Class</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Ali Hassan</td><td>Database Systems</td><td>2026-06-14</td><td><span class="tag tag-green">Present</span></td><td><div class="action-btns"><button class="btn-edit">Edit</button></div></td></tr>
+                <tr><td>2</td><td>Salman Safar</td><td>Database Systems</td><td>2026-06-14</td><td><span class="tag tag-green">Present</span></td><td><div class="action-btns"><button class="btn-edit">Edit</button></div></td></tr>
+                <tr><td>3</td><td>Zain Abbas</td><td>OOP</td><td>2026-06-14</td><td><span class="tag tag-red">Absent</span></td><td><div class="action-btns"><button class="btn-edit">Edit</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEACHER — MATERIALS -->
+        <div class="page" id="page-t-materials">
+          <div class="section-header"><h2>📖 Learning Materials</h2><button class="btn-add" onclick="openModal('materials')">+ Upload Material</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Type</th><th>Upload Date</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td><b>DB Lecture 1 — Intro to RDBMS</b></td><td>Database Systems</td><td><span class="tag tag-red">PDF</span></td><td>2026-05-15</td><td><div class="action-btns"><button class="btn-edit">Edit</button><button class="btn-del">Delete</button></div></td></tr>
+                <tr><td>2</td><td><b>OOP Concepts Slides</b></td><td>OOP</td><td><span class="tag tag-gold">PPT</span></td><td>2026-05-18</td><td><div class="action-btns"><button class="btn-edit">Edit</button><button class="btn-del">Delete</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TEACHER — ANNOUNCEMENTS (own only; cannot edit/delete admin ann) -->
+        <div class="page" id="page-t-announcements">
+          <div class="section-header"><h2>📢 Announcements</h2><button class="btn-add" onclick="openModal('announcements')">+ Post Announcement</button></div>
+          <div class="info-banner warning">⚠️ You can only edit or delete announcements you posted. Admin announcements are read-only.</div>
+          <div id="teacher-ann-list"></div>
+        </div>
+
+        <!-- TEACHER — NOTIFICATIONS -->
+        <div class="page" id="page-t-notifications">
+          <div class="section-header"><h2>🔔 Notifications</h2></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>#</th><th>Title</th><th>Message</th><th>From</th><th>Date</th><th>Read</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>New Assignment Submitted</td><td>Ali Hassan submitted Assignment #3</td><td>System</td><td>2026-06-14</td><td><span class="tag tag-red">No</span></td></tr>
+              <tr><td>2</td><td>Class Reminder</td><td>Your DB Systems class starts in 30 minutes</td><td>System</td><td>2026-06-14</td><td><span class="tag tag-green">Yes</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+
+        <!-- ═══════════ STUDENT PAGES ═══════════ -->
+
+        <!-- STUDENT DASHBOARD -->
+        <div class="page" id="page-dashboard-Student">
+          <div class="stats-grid">
+            <div class="stat-card blue"><div class="stat-icon">📚</div><div><div class="stat-val">3</div><div class="stat-label">Enrolled Subjects</div></div></div>
+            <div class="stat-card gold"><div class="stat-icon">✅</div><div><div class="stat-val">89%</div><div class="stat-label">My Attendance</div></div></div>
+            <div class="stat-card"><div class="stat-icon">📝</div><div><div class="stat-val">2</div><div class="stat-label">Pending Assignments</div></div></div>
+            <div class="stat-card red"><div class="stat-icon">💳</div><div><div class="stat-val">PKR 5,000</div><div class="stat-label">Fee Due</div></div></div>
+          </div>
+          <div class="dash-grid">
+            <div>
+              <div class="card">
+                <div class="card-title">📅 Today's Live Classes</div>
+                <div class="lc-card">
+                  <div class="lc-info"><div class="lc-title">Database Systems</div><div class="lc-meta">Dr. Aamir Khan • 10:00 AM – 11:30 AM</div></div>
+                  <a class="btn-join" href="https://zoom.us/j/123" target="_blank">Join Now</a>
+                </div>
+                <div class="lc-card" style="border:1.5px solid var(--border)">
+                  <div class="lc-info"><div class="lc-title">OOP with Java</div><div class="lc-meta">Ms. Sara Malik • 2:00 PM – 3:30 PM</div></div>
+                  <a class="btn-join" href="https://zoom.us/j/456" target="_blank">Join Now</a>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">📢 Recent Announcements</div>
+                <div class="activity-item"><div class="activity-dot" style="background:var(--gold)"></div><div><div class="activity-text" style="font-weight:600">Mid-Term Exam Schedule</div><div class="activity-time">By Admin • 2026-06-10 • General</div></div></div>
+                <div class="activity-item"><div class="activity-dot" style="background:var(--info)"></div><div><div class="activity-text" style="font-weight:600">Assignment 3 Extended</div><div class="activity-time">By Dr. Aamir Khan • 2026-06-12 • Database Systems</div></div></div>
+                <div class="activity-item"><div class="activity-dot"></div><div><div class="activity-text" style="font-weight:600">New Quiz Added</div><div class="activity-time">By Ms. Sara Malik • 2026-06-13 • OOP</div></div></div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <div class="card-title">📊 My Attendance</div>
+                <div style="font-size:13px;display:flex;flex-direction:column;gap:10px">
+                  <div><div style="display:flex;justify-content:space-between"><span>Database Systems</span><span style="font-weight:700;color:var(--success)">91%</span></div><div class="progress-bar"><div class="progress-fill" style="width:91%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between"><span>OOP with Java</span><span style="font-weight:700;color:var(--gold)">85%</span></div><div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--gold)"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between"><span>Data Structures</span><span style="font-weight:700;color:var(--warning)">76%</span></div><div class="progress-bar"><div class="progress-fill" style="width:76%;background:var(--warning)"></div></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">📝 Upcoming Deadlines</div>
+                <div style="font-size:13px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">ER Diagram Design</div><div style="font-size:11px;color:var(--text-muted)">DB Systems</div></div><span class="tag tag-gold">Jun 20</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:600">Linked List Implementation</div><div style="font-size:11px;color:var(--text-muted)">Data Structures</div></div><span class="tag tag-red">Jun 22</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENT — MY SUBJECTS (view + drop request) -->
+        <div class="page" id="page-s-subjects">
+          <div class="section-header"><h2>📚 My Subjects</h2></div>
+          <div class="info-banner warning">⚠️ You cannot add or drop a course directly. To request a course drop, use the "Request Course Drop" button and email the admin.</div>
+          <div class="subj-cards">
+            <div class="subj-card"><div class="subj-card-title">Database Systems</div><div class="subj-card-meta">CS-271 • Dr. Aamir Khan • 3 Credit Hrs</div><div style="margin-top:10px"><button class="btn-mail" onclick="showDropModal('Database Systems')">📧 Request Drop</button></div></div>
+            <div class="subj-card" style="border-left-color:var(--success)"><div class="subj-card-title">Object Oriented Programming</div><div class="subj-card-meta">CS-202 • Ms. Sara Malik • 3 Credit Hrs</div><div style="margin-top:10px"><button class="btn-mail" onclick="showDropModal('OOP')">📧 Request Drop</button></div></div>
+            <div class="subj-card" style="border-left-color:var(--gold)"><div class="subj-card-title">Data Structures & Algorithms</div><div class="subj-card-meta">CS-211 • Mr. Bilal Ahmed • 3 Credit Hrs</div><div style="margin-top:10px"><button class="btn-mail" onclick="showDropModal('Data Structures')">📧 Request Drop</button></div></div>
+          </div>
+        </div>
+
+        <!-- STUDENT — ATTENDANCE (own only) -->
+        <div class="page" id="page-s-attendance">
+          <div class="section-header"><h2>✅ My Attendance</h2></div>
+          <div class="att-summary">
+            <div class="att-box present"><div class="aval">28</div><div class="alabel">Classes Present</div></div>
+            <div class="att-box absent"><div class="aval">4</div><div class="alabel">Classes Absent</div></div>
+            <div class="att-box rate"><div class="aval">87.5%</div><div class="alabel">Attendance Rate</div></div>
+          </div>
+          <div class="search-bar">
+            <select><option>All Subjects</option><option>Database Systems</option><option>OOP</option><option>Data Structures</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Subject</th><th>Class Date</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Database Systems</td><td>2026-06-14</td><td><span class="tag tag-green">Present</span></td></tr>
+                <tr><td>2</td><td>OOP with Java</td><td>2026-06-14</td><td><span class="tag tag-green">Present</span></td></tr>
+                <tr><td>3</td><td>Data Structures</td><td>2026-06-13</td><td><span class="tag tag-red">Absent</span></td></tr>
+                <tr><td>4</td><td>Database Systems</td><td>2026-06-12</td><td><span class="tag tag-green">Present</span></td></tr>
+                <tr><td>5</td><td>OOP with Java</td><td>2026-06-11</td><td><span class="tag tag-green">Present</span></td></tr>
+                <tr><td>6</td><td>Data Structures</td><td>2026-06-10</td><td><span class="tag tag-green">Present</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- STUDENT — ASSIGNMENTS (submit only) -->
+        <div class="page" id="page-s-assignments">
+          <div class="section-header"><h2>📝 My Assignments</h2></div>
+          <div class="tab-bar">
+            <div class="tab active" onclick="switchTab('sassign',0)">Pending</div>
+            <div class="tab" onclick="switchTab('sassign',1)">Submitted</div>
+          </div>
+          <div class="tab-panel active" id="sassign-tab-0">
+            <div class="info-banner">📌 Submit your assignments before the deadline. You cannot delete assignments posted by teachers.</div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Teacher</th><th>Deadline</th><th>Total Marks</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><b>ER Diagram Design</b></td><td>Database Systems</td><td>Dr. Aamir Khan</td><td><span class="tag tag-gold">Jun 20</span></td><td>20</td><td><button class="btn-add" style="padding:6px 14px;font-size:12px" onclick="showToast('Assignment submitted! ✓','')">Submit</button></td></tr>
+                  <tr><td>2</td><td><b>Linked List Implementation</b></td><td>Data Structures</td><td>Mr. Bilal Ahmed</td><td><span class="tag tag-red">Jun 22</span></td><td>25</td><td><button class="btn-add" style="padding:6px 14px;font-size:12px" onclick="showToast('Assignment submitted! ✓','')">Submit</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-panel" id="sassign-tab-1">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Submitted On</th><th>Marks</th><th>Feedback</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><b>Inheritance Lab Task</b></td><td>OOP</td><td>2026-06-11</td><td><span class="tag tag-gold">12/15</span></td><td>Good effort, needs more comments</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENT — QUIZZES (view results only) -->
+        <div class="page" id="page-s-quizzes">
+          <div class="section-header"><h2>📊 Quizzes</h2></div>
+          <div class="tab-bar">
+            <div class="tab active" onclick="switchTab('squiz',0)">Upcoming Quizzes</div>
+            <div class="tab" onclick="switchTab('squiz',1)">My Results</div>
+          </div>
+          <div class="tab-panel active" id="squiz-tab-0">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Date</th><th>Total Marks</th><th>Time Limit</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td><b>Quiz 2 — Trees & Graphs</b></td><td>Data Structures</td><td>2026-06-20</td><td>30</td><td>35 min</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-panel" id="squiz-tab-1">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>#</th><th>Quiz Title</th><th>Subject</th><th>Score</th><th>Date</th><th>Result</th></tr></thead>
+                <tbody>
+                  <tr><td>1</td><td>Quiz 1 — Normalization</td><td>Database Systems</td><td><span class="tag tag-green">19/25</span></td><td>2026-06-08</td><td><span class="tag tag-green">Passed</span></td></tr>
+                  <tr><td>2</td><td>Quiz 1 — OOP Concepts</td><td>OOP</td><td><span class="tag tag-gold">14/20</span></td><td>2026-06-09</td><td><span class="tag tag-green">Passed</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- STUDENT — LIVE CLASSES -->
+        <div class="page" id="page-s-liveclasses">
+          <div class="section-header"><h2>🎥 Live Classes</h2></div>
+          <div class="info-banner">📡 Join your scheduled live classes below. Classes are scheduled by your teacher.</div>
+          <div class="lc-card">
+            <div class="lc-info"><div class="lc-title">Database Systems</div><div class="lc-meta">Dr. Aamir Khan • 10:00 AM – 11:30 AM • Sun, 14 Jun 2026</div></div>
+            <a class="btn-join" href="https://zoom.us/j/123" target="_blank">Join Zoom</a>
+          </div>
+          <div class="lc-card">
+            <div class="lc-info"><div class="lc-title">OOP with Java</div><div class="lc-meta">Ms. Sara Malik • 2:00 PM – 3:30 PM • Sun, 14 Jun 2026</div></div>
+            <a class="btn-join" href="https://zoom.us/j/456" target="_blank">Join Zoom</a>
+          </div>
+          <div class="lc-card" style="border:1.5px solid var(--border)">
+            <div class="lc-info"><div class="lc-title">Data Structures & Algorithms</div><div class="lc-meta">Mr. Bilal Ahmed • 9:00 AM – 10:30 AM • Mon, 15 Jun 2026</div></div>
+            <a class="btn-join" href="https://zoom.us/j/789" target="_blank">Join Zoom</a>
+          </div>
+        </div>
+
+        <!-- STUDENT — MATERIALS -->
+        <div class="page" id="page-s-materials">
+          <div class="section-header"><h2>📖 Learning Materials</h2></div>
+          <div class="search-bar">
+            <input type="text" placeholder="Search materials...">
+            <select><option>All Subjects</option><option>Database Systems</option><option>OOP</option><option>Data Structures</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Title</th><th>Subject</th><th>Teacher</th><th>Type</th><th>Upload Date</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td><b>DB Lecture 1 — Intro to RDBMS</b></td><td>Database Systems</td><td>Dr. Aamir Khan</td><td><span class="tag tag-red">PDF</span></td><td>2026-05-15</td><td><button class="btn-view">Download</button></td></tr>
+                <tr><td>2</td><td><b>OOP Concepts Slides</b></td><td>OOP</td><td>Ms. Sara Malik</td><td><span class="tag tag-gold">PPT</span></td><td>2026-05-18</td><td><button class="btn-view">Download</button></td></tr>
+                <tr><td>3</td><td><b>Linked List Video Tutorial</b></td><td>Data Structures</td><td>Mr. Bilal Ahmed</td><td><span class="tag tag-blue">Video</span></td><td>2026-05-20</td><td><button class="btn-view">Watch</button></td></tr>
+                <tr><td>4</td><td><b>ERD Practice Problems</b></td><td>Database Systems</td><td>Dr. Aamir Khan</td><td><span class="tag tag-red">PDF</span></td><td>2026-06-01</td><td><button class="btn-view">Download</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- STUDENT — ANNOUNCEMENTS (read only) -->
+        <div class="page" id="page-s-announcements">
+          <div class="section-header"><h2>📢 Announcements</h2></div>
+          <div class="info-banner">📌 Showing announcements for your enrolled subjects and general announcements.</div>
+          <div id="student-ann-list"></div>
+        </div>
+
+        <!-- STUDENT — MY FEES -->
+        <div class="page" id="page-s-fees">
+          <div class="section-header"><h2>💳 My Fee Status</h2></div>
+          <div class="fee-summary">
+            <div class="fee-box total"><div class="fval">PKR 15,000</div><div class="flabel">Total Fee</div></div>
+            <div class="fee-box paid"><div class="fval">PKR 10,000</div><div class="flabel">Amount Paid</div></div>
+            <div class="fee-box pending"><div class="fval">PKR 5,000</div><div class="flabel">Balance Due</div></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Month</th><th>Total Fee</th><th>Discount</th><th>Amount Paid</th><th>Balance</th><th>Due Date</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>May 2026</td><td>PKR 15,000</td><td>10%</td><td>PKR 13,500</td><td>PKR 0</td><td>2026-05-25</td><td><span class="tag tag-green">Paid</span></td></tr>
+                <tr><td>2</td><td>June 2026</td><td>PKR 15,000</td><td>10%</td><td>PKR 8,500</td><td>PKR 5,000</td><td>2026-06-25</td><td><span class="tag tag-gold">Partial</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- STUDENT — NOTIFICATIONS -->
+        <div class="page" id="page-s-notifications">
+          <div class="section-header"><h2>🔔 Notifications</h2></div>
+          <div class="table-wrap">
+            <table><thead><tr><th>#</th><th>Title</th><th>Message</th><th>Date</th><th>Read</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Assignment Graded</td><td>Your Assignment #1 — DB Systems has been graded</td><td>2026-06-11</td><td><span class="tag tag-red">No</span></td></tr>
+              <tr><td>2</td><td>Fee Reminder</td><td>Your June fee balance of PKR 5,000 is due by June 25</td><td>2026-06-10</td><td><span class="tag tag-green">Yes</span></td></tr>
+              <tr><td>3</td><td>Quiz Scheduled</td><td>Quiz 2 for Data Structures scheduled on June 20</td><td>2026-06-09</td><td><span class="tag tag-green">Yes</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+      </div><!-- /pages -->
+    </div><!-- /main-content -->
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Add Record</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveRecord()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE DROP MODAL -->
+<div class="modal-overlay" id="drop-modal-overlay" onclick="if(event.target.id==='drop-modal-overlay')closeDropModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📧 Request Course Drop</div>
+      <button class="modal-close" onclick="closeDropModal()">✕</button>
+    </div>
+    <div class="info-banner warning" style="margin-bottom:16px">You cannot drop courses directly. This will compose an email to the admin. Admin will review and take action.</div>
+    <div class="drop-form" style="background:none;box-shadow:none;padding:0">
+      <label>Subject to Drop</label>
+      <select id="drop-subject"><option>Database Systems</option><option>OOP with Java</option><option>Data Structures</option></select>
+      <label>Reason for Dropping</label>
+      <textarea id="drop-reason" placeholder="Explain your reason for requesting to drop this course..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeDropModal()">Cancel</button>
+      <button class="btn-save" onclick="sendDropEmail()" style="background:var(--info)">📧 Send Email to Admin</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+let currentUser = {};
+let currentPage = '';
+let editingId = null;
+let editingType = null;
+let selectedRole = 'Admin';
+let META = { students: [], teachers: [], programs: [], subjects: [] };
+
+let DATA = {
+  students: [], teachers: [], programs: [], subjects: [], enrollment: [],
+  assignments: [], quizzes: [], liveclasses: [], attendance: [], fees: [],
+  materials: [], announcements: [], users: [], notifications: [], auditlog: []
+};
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || 'Request failed');
+  return body;
+}
+
+function selectRole(role, el) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const emails = { Admin: 'admin@aakacademy.pk', Teacher: 'ali.hassan@aakacademy.pk', Student: 'ahmed.raza@student.aakacademy.pk' };
+  document.getElementById('login-email').value = emails[role] || '';
+}
+
+async function loadMeta() {
+  META = await api('/meta');
+  refreshFormOptions();
+}
+
+function refreshFormOptions() {
+  if (META.programs.length) FORMS.students.fields.find(f => f.name === 'program').options = META.programs.map(p => p.name);
+  if (META.programs.length) FORMS.subjects.fields.find(f => f.name === 'program').options = META.programs.map(p => p.name);
+  if (META.teachers.length) FORMS.subjects.fields.find(f => f.name === 'teacher').options = META.teachers.map(t => t.name);
+  if (META.students.length) FORMS.enrollment.fields.find(f => f.name === 'student').options = META.students.map(s => s.name);
+  if (META.subjects.length) {
+    const subNames = META.subjects.map(s => s.name);
+    FORMS.enrollment.fields.find(f => f.name === 'subject').options = subNames;
+    ['assignments','quizzes','liveclasses','materials'].forEach(t => {
+      const f = FORMS[t].fields.find(x => x.name === 'subject');
+      if (f) f.options = subNames;
+    });
+    FORMS.announcements.fields.find(f => f.name === 'subject').options = ['General', ...subNames];
+  }
+  if (META.students.length) {
+    const sn = META.students.map(s => s.name);
+    FORMS.attendance.fields.find(f => f.name === 'student').options = sn;
+    FORMS.fees.fields.find(f => f.name === 'student').options = sn;
+  }
+  if (DATA.liveclasses.length) {
+    FORMS.attendance.fields.find(f => f.name === 'liveClass').options = DATA.liveclasses.map(l => `${l.subject} — ${l.date}`);
+  }
+}
+
+async function loadAllData() {
+  const params = new URLSearchParams();
+  if (currentUser.teacher_id) params.set('teacher_id', currentUser.teacher_id);
+  if (currentUser.student_id) params.set('student_id', currentUser.student_id);
+  const qs = params.toString() ? '?' + params.toString() : '';
+  const all = await api('/data' + qs);
+  Object.assign(DATA, all);
+  refreshFormOptions();
+  renderAllTables();
+  renderAnnouncements();
+  renderAuditLog();
+  renderNotifications();
+  updateDashboardStats();
+}
+
+async function updateDashboardStats() {
+  try {
+    const s = await api('/dashboard/stats');
+    document.querySelectorAll('#page-dashboard-Admin .stat-val').forEach((el, i) => {
+      if (i === 0) el.textContent = s.students;
+      if (i === 1) el.textContent = s.teachers;
+      if (i === 2) el.textContent = s.subjects;
+      if (i === 3) el.textContent = 'PKR ' + Number(s.revenue).toLocaleString();
+    });
+  } catch (_) {}
+}
+
+function renderAuditLog() {
+  const b = document.getElementById('auditlog-body');
+  if (!b || !DATA.auditlog) return;
+  b.innerHTML = DATA.auditlog.map((a, i) =>
+    `<tr><td>${i+1}</td><td>${a.user}</td><td>${a.action}</td><td>${a.oldVal||'—'}</td><td>${a.newVal||'—'}</td><td>${a.date}</td></tr>`
+  ).join('');
+}
+
+function renderNotifications() {
+  const b = document.querySelector('#page-notifications tbody, #page-s-notifications tbody, #page-t-notifications tbody');
+  if (!b || !DATA.notifications) return;
+  b.innerHTML = DATA.notifications.map((n, i) =>
+    `<tr><td>${i+1}</td><td>${n.title}</td><td>${n.message||''}</td><td>${n.type||'—'}</td><td>${n.date}</td><td><span class="tag ${n.is_read?'tag-green':'tag-red'}">${n.is_read?'Yes':'No'}</span></td></tr>`
+  ).join('');
+}
+
+// ── NAV CONFIG ──
+const NAV = {
+  Admin: [
+    {section:'Overview', items:[{id:'dashboard',label:'Dashboard',icon:'🏠'}]},
+    {section:'Academic Management', items:[
+      {id:'students',label:'Students',icon:'👨‍🎓'},
+      {id:'teachers',label:'Teachers',icon:'👨‍🏫'},
+      {id:'programs',label:'Programs',icon:'🎓'},
+      {id:'subjects',label:'Subjects',icon:'📚'},
+      {id:'enrollment',label:'Enrollment',icon:'📋'},
+      {id:'drop-requests',label:'Drop Requests',icon:'📩'},
+    ]},
+    {section:'Learning', items:[
+      {id:'assignments-admin',label:'Assignments',icon:'📝'},
+      {id:'quizzes-admin',label:'Quizzes',icon:'📊'},
+      {id:'liveclasses-admin',label:'Live Classes',icon:'🎥'},
+      {id:'attendance-admin',label:'Attendance (All)',icon:'✅'},
+      {id:'materials-admin',label:'Materials',icon:'📖'},
+    ]},
+    {section:'Finance', items:[{id:'fees',label:'Fee Management',icon:'💳'}]},
+    {section:'Communication', items:[
+      {id:'admin-announcements',label:'Announcements',icon:'📢'},
+      {id:'notifications',label:'Notifications',icon:'🔔'},
+    ]},
+    {section:'System', items:[
+      {id:'users',label:'Users',icon:'👤'},
+      {id:'auditlog',label:'Audit Log',icon:'🔐'},
+    ]},
+  ],
+  Teacher: [
+    {section:'Overview', items:[{id:'dashboard',label:'Dashboard',icon:'🏠'}]},
+    {section:'Academic', items:[
+      {id:'t-subjects',label:'My Subjects',icon:'📚'},
+    ]},
+    {section:'Teaching', items:[
+      {id:'t-assignments',label:'Assignments',icon:'📝'},
+      {id:'t-quizzes',label:'Quizzes',icon:'📊'},
+      {id:'t-liveclasses',label:'Live Classes',icon:'🎥'},
+      {id:'t-attendance',label:'Mark Attendance',icon:'✅'},
+      {id:'t-materials',label:'Materials',icon:'📖'},
+    ]},
+    {section:'Communication', items:[
+      {id:'t-announcements',label:'Announcements',icon:'📢'},
+      {id:'t-notifications',label:'Notifications',icon:'🔔'},
+    ]},
+  ],
+  Student: [
+    {section:'Overview', items:[{id:'dashboard',label:'Dashboard',icon:'🏠'}]},
+    {section:'My Academic', items:[
+      {id:'s-subjects',label:'My Subjects',icon:'📚'},
+      {id:'s-attendance',label:'My Attendance',icon:'✅'},
+    ]},
+    {section:'Learning', items:[
+      {id:'s-assignments',label:'Assignments',icon:'📝'},
+      {id:'s-quizzes',label:'Quizzes',icon:'📊'},
+      {id:'s-liveclasses',label:'Live Classes',icon:'🎥'},
+      {id:'s-materials',label:'Materials',icon:'📖'},
+    ]},
+    {section:'Finance', items:[{id:'s-fees',label:'My Fees',icon:'💳'}]},
+    {section:'Updates', items:[
+      {id:'s-announcements',label:'Announcements',icon:'📢'},
+      {id:'s-notifications',label:'Notifications',icon:'🔔'},
+    ]},
+  ]
+};
+
+// ── FORMS ──
+const FORMS = {
+  students:{title:'Student',fields:[
+    {name:'regNo',label:'Registration No',type:'text',ph:'NUM-BSCS-2024-XX'},{name:'name',label:'Full Name',type:'text',ph:'Enter full name'},
+    {name:'program',label:'Program',type:'select',options:['BS Computer Science','BS Software Engineering','BS Information Technology']},
+    {name:'dob',label:'Date of Birth',type:'date'},{name:'gender',label:'Gender',type:'select',options:['Male','Female']},
+    {name:'enrolled',label:'Enrollment Date',type:'date'},{name:'status',label:'Status',type:'select',options:['Active','Inactive']},
+  ]},
+  teachers:{title:'Teacher',fields:[
+    {name:'name',label:'Full Name',type:'text',ph:'Enter full name'},{name:'qualification',label:'Qualification',type:'text',ph:'PhD Computer Science'},
+    {name:'specialization',label:'Specialization',type:'text',ph:'Database Systems'},{name:'experience',label:'Experience (yrs)',type:'number',ph:'0'},
+    {name:'hireDate',label:'Hire Date',type:'date'},{name:'email',label:'Email',type:'email',ph:'teacher@aakacademy.edu.pk'},
+  ]},
+  programs:{title:'Program',fields:[
+    {name:'name',label:'Program Name',type:'text',ph:'BS Computer Science',full:true},
+    {name:'level',label:'Level',type:'select',options:['Undergraduate','Graduate','Postgraduate']},{name:'duration',label:'Duration (years)',type:'number',ph:'4'},
+  ]},
+  subjects:{title:'Subject',fields:[
+    {name:'code',label:'Subject Code',type:'text',ph:'CS-271'},{name:'name',label:'Subject Name',type:'text',ph:'Database Systems'},
+    {name:'program',label:'Program',type:'select',options:['BS Computer Science','BS Software Engineering','BS Information Technology']},
+    {name:'teacher',label:'Teacher',type:'select',options:['Dr. Aamir Khan','Ms. Sara Malik','Mr. Bilal Ahmed','Dr. Nadia Hussain']},
+    {name:'creditHrs',label:'Credit Hours',type:'number',ph:'3'},{name:'fee',label:'Fee (PKR)',type:'number',ph:'5000'},
+  ]},
+  enrollment:{title:'Enrollment',fields:[
+    {name:'student',label:'Student',type:'select',options:['Salman Safar','Haris Ajmal','Farwa Imran','Ali Hassan','Sara Ahmed','Zain Abbas']},
+    {name:'subject',label:'Subject',type:'select',options:['Database Systems','OOP','Data Structures','Intro to Programming','Discrete Mathematics']},
+    {name:'date',label:'Enrollment Date',type:'date'},{name:'discount',label:'Discount %',type:'number',ph:'0'},
+    {name:'status',label:'Status',type:'select',options:['Active','Inactive']},
+  ]},
+  assignments:{title:'Assignment',fields:[
+    {name:'title',label:'Title',type:'text',ph:'Assignment title',full:true},
+    {name:'subject',label:'Subject',type:'select',options:['Database Systems','OOP','Data Structures']},
+    {name:'deadline',label:'Deadline',type:'date'},{name:'marks',label:'Total Marks',type:'number',ph:'20'},
+    {name:'instructions',label:'Instructions',type:'textarea',ph:'Assignment instructions...',full:true},
+  ]},
+  quizzes:{title:'Quiz',fields:[
+    {name:'title',label:'Quiz Title',type:'text',ph:'Quiz 1 — Topic',full:true},
+    {name:'subject',label:'Subject',type:'select',options:['Database Systems','OOP','Data Structures']},
+    {name:'marks',label:'Total Marks',type:'number',ph:'25'},{name:'date',label:'Quiz Date',type:'date'},
+    {name:'time',label:'Time Limit (min)',type:'number',ph:'30'},
+  ]},
+  liveclasses:{title:'Live Class',fields:[
+    {name:'subject',label:'Subject',type:'select',options:['Database Systems','OOP','Data Structures']},
+    {name:'zoom',label:'Zoom Link',type:'text',ph:'https://zoom.us/j/...',full:true},
+    {name:'date',label:'Class Date',type:'date'},{name:'start',label:'Start Time',type:'time'},{name:'end',label:'End Time',type:'time'},
+  ]},
+  attendance:{title:'Attendance',fields:[
+    {name:'student',label:'Student',type:'select',options:['Salman Safar','Haris Ajmal','Farwa Imran','Ali Hassan','Sara Ahmed']},
+    {name:'liveClass',label:'Live Class',type:'select',options:['Database Systems — Jun 14','OOP — Jun 14','Data Structures — Jun 15']},
+    {name:'datetime',label:'Join Time',type:'datetime-local'},{name:'status',label:'Status',type:'select',options:['Present','Absent']},
+  ]},
+  fees:{title:'Fee Record',fields:[
+    {name:'student',label:'Student',type:'select',options:['Salman Safar','Haris Ajmal','Farwa Imran','Ali Hassan','Sara Ahmed']},
+    {name:'total',label:'Total Fee (PKR)',type:'number',ph:'15000'},{name:'discount',label:'Discount %',type:'number',ph:'0'},
+    {name:'paid',label:'Amount Paid',type:'number',ph:'0'},{name:'due',label:'Due Date',type:'date'},
+    {name:'status',label:'Status',type:'select',options:['Pending','Partial','Paid','Overdue']},
+  ]},
+  materials:{title:'Material',fields:[
+    {name:'title',label:'Title',type:'text',ph:'Lecture 1 — Introduction',full:true},
+    {name:'subject',label:'Subject',type:'select',options:['Database Systems','OOP','Data Structures']},
+    {name:'type',label:'Type',type:'select',options:['PDF','Video','PPT','Link']},
+    {name:'date',label:'Upload Date',type:'date'},
+  ]},
+  announcements:{title:'Announcement',fields:[
+    {name:'title',label:'Title',type:'text',ph:'Announcement title',full:true},
+    {name:'subject',label:'Subject',type:'select',options:['General','Database Systems','OOP','Data Structures']},
+    {name:'content',label:'Content',type:'textarea',ph:'Write announcement...',full:true},
+  ]},
+  notifications:{title:'Notification',fields:[
+    {name:'recipient',label:'Recipient',type:'text',ph:'All Students / Name'},{name:'title',label:'Title',type:'text',ph:'Notification title'},
+    {name:'message',label:'Message',type:'textarea',ph:'Message...',full:true},
+    {name:'type',label:'Type',type:'select',options:['Personal','Broadcast']},
+  ]},
+  users:{title:'User',fields:[
+    {name:'name',label:'Full Name',type:'text',ph:'Full name'},{name:'email',label:'Email',type:'email',ph:'user@aakacademy.edu.pk'},
+    {name:'role',label:'Role',type:'select',options:['Admin','Teacher','Student']},{name:'phone',label:'Phone',type:'text',ph:'0300-XXXXXXX'},
+    {name:'status',label:'Status',type:'select',options:['Active','Inactive']},
+  ]},
+};
+
+// ── LOGIN ──
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-pass').value;
+  const role = selectedRole;
+  if (!email) { showToast('Please enter email', 'error'); return; }
+  try {
+    const user = await api('/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, role }),
+    });
+    currentUser = user;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('sb-name').textContent = currentUser.name;
+    document.getElementById('sb-role-badge').innerHTML = `<span class="role-badge ${role.toLowerCase()}">${role}</span>`;
+    document.getElementById('sb-avatar').textContent = currentUser.name[0];
+    await loadMeta();
+    await loadAllData();
+    buildNav();
+    updateDate();
+    showPage('dashboard');
+    showToast('Welcome, ' + currentUser.name + '!');
+  } catch (err) {
+    showToast(err.message || 'Login failed', 'error');
+  }
+}
+
+function doLogout() {
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+function updateDate() {
+  const now = new Date();
+  document.getElementById('date-chip').textContent = now.toLocaleDateString('en-PK',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+
+function buildNav() {
+  const navEl = document.getElementById('sidebar-nav');
+  navEl.innerHTML='';
+  const groups = NAV[currentUser.role]||NAV.Admin;
+  groups.forEach(g=>{
+    navEl.innerHTML+=`<div class="nav-section">${g.section}</div>`;
+    g.items.forEach(item=>{
+      navEl.innerHTML+=`<div class="nav-item" id="nav-${item.id}" onclick="showPage('${item.id}')"><span class="icon">${item.icon}</span>${item.label}</div>`;
+    });
+  });
+}
+
+function showPage(id) {
+  const role = currentUser.role;
+  // Map generic 'dashboard' to role-specific
+  let pageId = id;
+  if(id==='dashboard') pageId='dashboard-'+role;
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg = document.getElementById('page-'+pageId);
+  if(pg) pg.classList.add('active');
+  const nav = document.getElementById('nav-'+id);
+  if(nav) nav.classList.add('active');
+  currentPage=id;
+  const titles = {
+    dashboard:'Dashboard','dashboard-Admin':'Dashboard','dashboard-Teacher':'Dashboard','dashboard-Student':'Dashboard',
+    students:'Students',teachers:'Teachers',programs:'Programs',subjects:'Subjects',enrollment:'Enrollment',
+    'drop-requests':'Course Drop Requests',
+    'assignments-admin':'Assignments','quizzes-admin':'Quizzes','liveclasses-admin':'Live Classes',
+    'attendance-admin':'Attendance — All Students','materials-admin':'Learning Materials',
+    fees:'Fee Management','admin-announcements':'Announcements',notifications:'Notifications',users:'Users',auditlog:'Audit Log',
+    't-subjects':'My Subjects','t-assignments':'Assignments','t-quizzes':'Quizzes',
+    't-liveclasses':'Live Classes','t-attendance':'Attendance','t-materials':'Materials',
+    't-announcements':'Announcements','t-notifications':'Notifications',
+    's-subjects':'My Subjects','s-attendance':'My Attendance','s-assignments':'Assignments',
+    's-quizzes':'Quizzes','s-liveclasses':'Live Classes','s-materials':'Learning Materials',
+    's-fees':'My Fees','s-announcements':'Announcements','s-notifications':'Notifications',
+  };
+  document.getElementById('page-title').textContent=titles[id]||titles[pageId]||id;
+}
+
+// ── RENDER ──
+function renderAllTables() {
+  renderStudents(); renderTeachers(); renderPrograms(); renderSubjects();
+  renderEnrollment(); renderAssignments(); renderQuizzes(); renderLiveClasses();
+  renderAttendance(); renderFees(); renderMaterials(); renderUsers();
+}
+
+function renderStudents(){
+  const b=document.getElementById('students-body');if(!b)return;
+  b.innerHTML=DATA.students.map((s,i)=>
+    `<tr><td>${i+1}</td><td><b>${s.regNo}</b></td><td>${s.name}</td><td><span class="tag tag-blue">${s.program}</span></td><td>${s.dob}</td><td>${s.gender}</td><td>${s.enrolled}</td><td><span class="tag ${s.status==='Active'?'tag-green':'tag-red'}">${s.status}</span></td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('students',${s.id})">Edit</button><button class="btn-del" onclick="delRecord('students',${s.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderTeachers(){
+  const b=document.getElementById('teachers-body');if(!b)return;
+  b.innerHTML=DATA.teachers.map((t,i)=>
+    `<tr><td>${i+1}</td><td><b>${t.name}</b></td><td>${t.qualification}</td><td>${t.specialization}</td><td>${t.experience} yrs</td><td>${t.hireDate}</td><td><span class="tag tag-blue">${t.subjects}</span></td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('teachers',${t.id})">Edit</button><button class="btn-del" onclick="delRecord('teachers',${t.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderPrograms(){
+  const b=document.getElementById('programs-body');if(!b)return;
+  b.innerHTML=DATA.programs.map((p,i)=>
+    `<tr><td>${i+1}</td><td><b>${p.name}</b></td><td><span class="tag tag-gold">${p.level}</span></td><td>${p.duration} years</td><td>${p.students}</td><td>${p.subjects}</td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('programs',${p.id})">Edit</button><button class="btn-del" onclick="delRecord('programs',${p.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderSubjects(){
+  const b=document.getElementById('subjects-body');if(!b)return;
+  b.innerHTML=DATA.subjects.map((s,i)=>
+    `<tr><td>${i+1}</td><td><b>${s.code}</b></td><td>${s.name}</td><td>${s.program}</td><td>${s.teacher}</td><td>${s.creditHrs}</td><td>PKR ${Number(s.fee||0).toLocaleString()}</td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('subjects',${s.id})">Edit</button><button class="btn-del" onclick="delRecord('subjects',${s.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderEnrollment(){
+  const b=document.getElementById('enrollment-body');if(!b)return;
+  b.innerHTML=DATA.enrollment.map((e,i)=>
+    `<tr><td>${i+1}</td><td>${e.student}</td><td>${e.subject}</td><td>${e.date}</td><td>${e.discount}%</td><td><span class="tag ${e.status==='Active'?'tag-green':'tag-red'}">${e.status}</span></td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('enrollment',${e.id})">Edit</button><button class="btn-del" onclick="delRecord('enrollment',${e.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderAssignments(){
+  const b=document.getElementById('assignments-body');if(!b)return;
+  b.innerHTML=DATA.assignments.map((a,i)=>
+    `<tr><td>${i+1}</td><td><b>${a.title}</b></td><td>${a.subject}</td><td>${a.teacher}</td><td>${a.deadline}</td><td>${a.marks}</td><td><span class="tag tag-blue">${a.submissions}</span></td></tr>`
+  ).join('');
+}
+function renderQuizzes(){
+  const b=document.getElementById('quizzes-body');if(!b)return;
+  b.innerHTML=DATA.quizzes.map((q,i)=>
+    `<tr><td>${i+1}</td><td><b>${q.title}</b></td><td>${q.subject}</td><td>${q.teacher}</td><td>${q.marks}</td><td>${q.date}</td><td>${q.time} min</td></tr>`
+  ).join('');
+}
+function renderLiveClasses(){
+  const b=document.getElementById('liveclasses-body');if(!b)return;
+  b.innerHTML=DATA.liveclasses.map((l,i)=>
+    `<tr><td>${i+1}</td><td>${l.subject}</td><td>${l.teacher}</td><td><a href="${l.zoom}" target="_blank" style="color:var(--info)">Join Zoom</a></td><td>${l.date}</td><td>${l.start}</td><td>${l.end}</td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('liveclasses',${l.id})">Edit</button><button class="btn-del" onclick="delRecord('liveclasses',${l.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderAttendance(){
+  const b=document.getElementById('attendance-body');if(!b)return;
+  b.innerHTML=DATA.attendance.map((a,i)=>
+    `<tr><td>${i+1}</td><td>${a.student}</td><td>${a.liveClass}</td><td>${a.datetime}</td><td><span class="tag ${a.status==='Present'?'tag-green':'tag-red'}">${a.status}</span></td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('attendance',${a.id})">Edit</button><button class="btn-del" onclick="delRecord('attendance',${a.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderFees(){
+  const b=document.getElementById('fees-body');if(!b)return;
+  const st={Paid:'tag-green',Partial:'tag-gold',Pending:'tag-gray',Overdue:'tag-red'};
+  b.innerHTML=DATA.fees.map((f,i)=>
+    `<tr><td>${i+1}</td><td>${f.student}</td><td>PKR ${Number(f.total||0).toLocaleString()}</td><td>${f.discount}%</td><td>PKR ${Number(f.paid||0).toLocaleString()}</td><td>PKR ${Number(f.balance||0).toLocaleString()}</td><td>${f.due}</td><td><span class="tag ${st[f.status]||'tag-gray'}">${f.status}</span></td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('fees',${f.id})">Edit</button><button class="btn-del" onclick="delRecord('fees',${f.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+function renderMaterials(){
+  const b=document.getElementById('materials-body');if(!b)return;
+  const tt={PDF:'tag-red',Video:'tag-blue',PPT:'tag-gold',Link:'tag-green'};
+  b.innerHTML=DATA.materials.map((m,i)=>
+    `<tr><td>${i+1}</td><td><b>${m.title}</b></td><td>${m.subject}</td><td>${m.teacher}</td><td><span class="tag ${tt[m.type]||'tag-gray'}">${m.type}</span></td><td>${m.date}</td><td><button class="btn-view">View</button></td></tr>`
+  ).join('');
+}
+function renderUsers(){
+  const b=document.getElementById('users-body');if(!b)return;
+  const rt={Admin:'tag-red',Teacher:'tag-gold',Student:'tag-blue'};
+  b.innerHTML=DATA.users.map((u,i)=>
+    `<tr><td>${i+1}</td><td><b>${u.name}</b></td><td>${u.email}</td><td><span class="tag ${rt[u.role]||'tag-gray'}">${u.role}</span></td><td>${u.phone}</td><td><span class="tag ${u.status==='Active'?'tag-green':'tag-red'}">${u.status}</span></td><td>${u.lastLogin}</td><td><div class="action-btns"><button class="btn-edit" onclick="editRecord('users',${u.id})">Edit</button><button class="btn-del" onclick="delRecord('users',${u.id})">Delete</button></div></td></tr>`
+  ).join('');
+}
+
+// ── ANNOUNCEMENTS RENDER ──
+function renderAnnouncements() {
+  // Admin panel — can edit/delete admin ann, cannot touch teacher ann
+  const adminList = document.getElementById('admin-ann-list');
+  if(adminList) {
+    adminList.innerHTML = DATA.announcements.map(a=>`
+      <div class="ann-card ${a.isAdmin?'admin-ann':'teacher-ann'}">
+        <div class="ann-card-header">
+          <div>
+            <div class="ann-card-title">${a.title}</div>
+            <div class="ann-card-meta">📌 ${a.subject} &nbsp;|&nbsp; ${a.isAdmin?'<span class="tag tag-gold">Admin</span>':'<span class="tag tag-blue">Teacher</span>'} &nbsp;${a.postedBy} &nbsp;|&nbsp; ${a.posted}</div>
+          </div>
+        </div>
+        <div class="ann-card-body">${a.content}</div>
+        <div class="ann-actions">
+          ${a.isAdmin
+            ? `<button class="btn-edit" onclick="openModal('announcements',${a.id})">Edit</button><button class="btn-del" onclick="deleteAnn(${a.id})">Delete</button>`
+            : `<span style="font-size:12px;color:var(--text-muted);padding:5px 0">🔒 Posted by teacher — read only</span>`
+          }
+        </div>
+      </div>`).join('');
+  }
+
+  // Teacher panel — can edit/delete own, cannot touch admin ann
+  const teacherList = document.getElementById('teacher-ann-list');
+  if(teacherList) {
+    teacherList.innerHTML = DATA.announcements.map(a=>`
+      <div class="ann-card ${a.isAdmin?'admin-ann':'teacher-ann'}">
+        <div class="ann-card-header">
+          <div>
+            <div class="ann-card-title">${a.title}</div>
+            <div class="ann-card-meta">📌 ${a.subject} &nbsp;|&nbsp; ${a.isAdmin?'<span class="tag tag-gold">Admin</span>':'<span class="tag tag-blue">Teacher</span>'} &nbsp;${a.postedBy} &nbsp;|&nbsp; ${a.posted}</div>
+          </div>
+        </div>
+        <div class="ann-card-body">${a.content}</div>
+        <div class="ann-actions">
+          ${!a.isAdmin
+            ? `<button class="btn-edit" onclick="openModal('announcements',${a.id})">Edit</button><button class="btn-del" onclick="deleteAnn(${a.id})">Delete</button>`
+            : `<span style="font-size:12px;color:var(--text-muted);padding:5px 0">🔒 Admin announcement — read only</span>`
+          }
+        </div>
+      </div>`).join('');
+  }
+
+  // Student panel — read only, no delete or edit
+  const studentList = document.getElementById('student-ann-list');
+  if(studentList) {
+    studentList.innerHTML = DATA.announcements.map(a=>`
+      <div class="ann-card ${a.isAdmin?'admin-ann':'teacher-ann'}">
+        <div class="ann-card-header">
+          <div>
+            <div class="ann-card-title">${a.title}</div>
+            <div class="ann-card-meta">📌 ${a.subject} &nbsp;|&nbsp; ${a.isAdmin?'<span class="tag tag-gold">Admin</span>':'<span class="tag tag-blue">'+a.postedBy+'</span>'} &nbsp;|&nbsp; ${a.posted}</div>
+          </div>
+        </div>
+        <div class="ann-card-body">${a.content}</div>
+      </div>`).join('');
+  }
+}
+
+function deleteAnn(id) {
+  if (!confirm('Delete this announcement?')) return;
+  api('/announcements/' + id, { method: 'DELETE' })
+    .then(() => loadAllData())
+    .then(() => showToast('Announcement deleted.', 'error'))
+    .catch(e => showToast(e.message, 'error'));
+}
+
+// ── MODAL ──
+function openModal(type, id=null) {
+  editingType=type; editingId=id;
+  const cfg=FORMS[type]; if(!cfg)return;
+  const isEdit=id!==null;
+  document.getElementById('modal-title').textContent=(isEdit?'Edit ':'Add ')+cfg.title;
+  let record={};
+  if(isEdit&&DATA[type]) record=DATA[type].find(r=>r.id===id)||{};
+  let html='<div class="form-grid">';
+  cfg.fields.forEach(f=>{
+    const val=record[f.name]||'';
+    const cls=f.full?'form-group full':'form-group';
+    html+=`<div class="${cls}"><label>${f.label}</label>`;
+    if(f.type==='select'){
+      html+=`<select id="field-${f.name}">`;
+      (f.options||[]).forEach(o=>html+=`<option value="${o}" ${val===o?'selected':''}>${o}</option>`);
+      html+='</select>';
+    } else if(f.type==='textarea'){
+      html+=`<textarea id="field-${f.name}" placeholder="${f.ph||''}">${val}</textarea>`;
+    } else {
+      html+=`<input type="${f.type}" id="field-${f.name}" placeholder="${f.ph||''}" value="${val}">`;
+    }
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');editingType=null;editingId=null;}
+function closeModalOutside(e){if(e.target.id==='modal-overlay')closeModal();}
+function saveRecord(){
+  if(!editingType)return;
+  const cfg=FORMS[editingType];if(!cfg)return;
+  const obj={};
+  cfg.fields.forEach(f=>{const el=document.getElementById('field-'+f.name);if(el)obj[f.name]=el.value;});
+  if (currentUser.teacher_id) obj.teacher_id = currentUser.teacher_id;
+  if (currentUser.role === 'Admin' && editingType === 'announcements') obj.isAdmin = true;
+  if (currentUser.role === 'Teacher' && editingType === 'announcements') obj.teacher_id = currentUser.teacher_id;
+
+  const typeMap = {
+    liveclasses: 'liveclasses', announcements: 'announcements', notifications: 'notifications'
+  };
+  const endpoint = '/' + (typeMap[editingType] || editingType);
+  const method = editingId ? 'PUT' : 'POST';
+  const url = editingId ? endpoint + '/' + editingId : endpoint;
+
+  api(url, { method, body: JSON.stringify(obj) })
+    .then(() => loadAllData())
+    .then(() => {
+      showToast(editingId ? 'Record updated successfully!' : 'Record added successfully!');
+      closeModal();
+    })
+    .catch(e => showToast(e.message, 'error'));
+}
+function editRecord(type,id){openModal(type,id);}
+function delRecord(type,id){
+  if(!confirm('Delete this record? This cannot be undone.'))return;
+  const epMap = { liveclasses: 'liveclasses' };
+  const endpoint = '/' + (epMap[type] || type) + '/' + id;
+  api(endpoint, { method: 'DELETE' })
+    .then(() => loadAllData())
+    .then(() => showToast('Record deleted.', 'error'))
+    .catch(e => showToast(e.message, 'error'));
+}
+
+// ── DROP MODAL ──
+function showDropModal(subject) {
+  document.getElementById('drop-subject').value=subject;
+  document.getElementById('drop-modal-overlay').classList.add('open');
+}
+function closeDropModal(){document.getElementById('drop-modal-overlay').classList.remove('open');}
+function sendDropEmail(){
+  const subject=document.getElementById('drop-subject').value;
+  const reason=document.getElementById('drop-reason').value;
+  if(!reason.trim()){showToast('Please provide a reason.','error');return;}
+  closeDropModal();
+  showToast(`📧 Drop request for "${subject}" sent to admin!`,'');
+}
+
+// ── UTILS ──
+function filterTable(tableId,query){
+  const rows=document.querySelectorAll('#'+tableId+' tbody tr');
+  const q=query.toLowerCase();
+  rows.forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+}
+function filterByTag(tableId,val,colIdx){
+  const rows=document.querySelectorAll('#'+tableId+' tbody tr');
+  rows.forEach(r=>{
+    const cell=r.cells[colIdx];
+    r.style.display=(!val||(cell&&cell.textContent.includes(val)))?'':'none';
+  });
+}
+function switchTab(prefix,idx){
+  const panels=document.querySelectorAll(`[id^="${prefix}-tab-"]`);
+  panels.forEach((p,i)=>p.classList.toggle('active',i===idx));
+  // find tabs in scope
+  panels.forEach((p,i)=>{
+    const tab=p.previousElementSibling;
+  });
+  // simpler: toggle active on tab siblings
+  const firstPanel=document.getElementById(prefix+'-tab-0');
+  if(!firstPanel)return;
+  let bar=firstPanel.parentElement.querySelector('.tab-bar');
+  if(!bar)return;
+  bar.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+}
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(type==='error'?' error':type==='info'?' info':'')+' show';
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>
